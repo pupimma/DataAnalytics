@@ -185,7 +185,7 @@ if st.button("🔍 Realizar Diagnóstico"):
         sns.barplot(x=proba_df.columns, y=proba_df.iloc[0].values, palette="viridis", ax=ax)
         plt.xticks(rotation=45, ha='right')
         plt.ylabel("Probabilidade")
-        plt.xlabel("Categoria")
+        plt.xlabel("")
         plt.title("Análise de Risco por Categoria")
         st.pyplot(fig)
         
@@ -194,4 +194,5 @@ if st.button("🔍 Realizar Diagnóstico"):
 
 # Rodapé simples
 st.markdown("---")
+
 st.markdown("**Tech Challenge Fase 4** | Sistema de Apoio à Decisão Médica")
