@@ -194,6 +194,4 @@ if st.button("🔍 Realizar Diagnóstico"):
 
 # Rodapé simples
 st.markdown("---")
-
 st.markdown("**Tech Challenge Fase 4** | Sistema de Triagem de Obesidade")
-
