@@ -1,4 +1,3 @@
-# Arquivo: gerar_modelo_fix.py
 import pandas as pd
 import joblib
 from sklearn.ensemble import RandomForestClassifier
@@ -55,4 +54,5 @@ artifacts = {
 
 print("4. Salvando novo arquivo .pkl...")
 joblib.dump(artifacts, 'modelo_obesidade.pkl')
-print("✅ SUCESSO! Arquivo 'modelo_obesidade.pkl' foi gerado limpo.")
+
+print("SUCESSO! Arquivo 'modelo_obesidade.pkl' foi gerado limpo.")
