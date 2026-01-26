@@ -17,19 +17,19 @@ def get_insights(row):
     """Gera alertas baseados em regras de negócio simples."""
     alerts = []
     
-    # Regra 1: Consumo de Água (CH2O: 1=Baixo, 2=Médio, 3=Alto)
+    # Regra 1: Consumo de Água
     if row['CH2O'].values[0] < 2:
         alerts.append("💧 **Hidratação:** Consumo de água abaixo do ideal. Recomendado: > 2L/dia.")
     
-    # Regra 2: Consumo de Vegetais (FCVC: 1=Nunca, 3=Sempre)
+    # Regra 2: Consumo de Vegetais
     if row['FCVC'].values[0] < 2:
         alerts.append("🥦 **Nutrição:** Baixo consumo de vegetais reportado.")
     
-    # Regra 3: Sedentarismo (FAF: 0=Nenhuma atividade)
+    # Regra 3: Sedentarismo
     if row['FAF'].values[0] == 0:
         alerts.append("🏃 **Atividade Física:** Nenhuma atividade física registrada. Risco de sedentarismo.")
         
-    # Regra 4: Tecnologia (TUE: 0=Baixo, 2=Alto)
+    # Regra 4: Tecnologia
     if row['TUE'].values[0] > 1:
         alerts.append("📱 **Tempo de Tela:** Uso elevado de dispositivos eletrônicos.")
 
@@ -164,7 +164,7 @@ if st.button("Executar Análise"):
         st.subheader("Métrica Fisiológica")
         st.metric("IMC Calculado", f"{imc:.2f}")
 
-    # Exibição - Insights (Regras de Negócio)
+    # Exibição - Insights
     st.divider()
     st.subheader("Análise de Hábitos")
     
@@ -175,15 +175,16 @@ if st.button("Executar Análise"):
     else:
         st.success("✅ Nenhum hábito de risco crítico identificado.")
 
-    # Exibição - Gráfico
+    # Exibição - Gráfico (Agora Fixo)
     st.divider()
-    with st.expander("Visualizar Distribuição de Probabilidades"):
-        labels_clean = [map_labels.get(c, c) for c in le.classes_]
-        df_chart = pd.DataFrame(proba, columns=labels_clean)
-        
-        fig, ax = plt.subplots(figsize=(10, 3))
-        sns.barplot(x=df_chart.columns, y=df_chart.iloc[0].values, palette="viridis", ax=ax)
-        plt.xticks(rotation=15, ha='right', fontsize=9)
-        plt.ylabel("Score")
-        plt.xlabel("")
-        st.pyplot(fig)
+    st.subheader("Distribuição de Probabilidades")
+    
+    labels_clean = [map_labels.get(c, c) for c in le.classes_]
+    df_chart = pd.DataFrame(proba, columns=labels_clean)
+    
+    fig, ax = plt.subplots(figsize=(10, 3))
+    sns.barplot(x=df_chart.columns, y=df_chart.iloc[0].values, palette="viridis", ax=ax)
+    plt.xticks(rotation=15, ha='right', fontsize=9)
+    plt.ylabel("Score")
+    plt.xlabel("")
+    st.pyplot(fig)
