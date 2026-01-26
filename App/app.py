@@ -151,7 +151,9 @@ if st.button("Realizar Diagnóstico"):
         sns.barplot(x=df_proba.columns, y=df_proba.iloc[0].values, palette="viridis", ax=ax)
         plt.xticks(rotation=45, ha='right')
         plt.ylabel("Probabilidade")
+        plt.xlabel("")
         st.pyplot(fig)
         
     except Exception as e:
         st.error(f"Erro no processamento: {e}")
+
