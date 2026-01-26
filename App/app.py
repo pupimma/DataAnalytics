@@ -5,148 +5,118 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
-import joblib
 
-# Configuração inicial da página
-st.set_page_config(
-    page_title="Predição de Obesidade",
-    page_icon="🏥",
-    layout="wide"
-)
+# Configuração da página
+st.set_page_config(page_title="Predição de Obesidade", page_icon="🏥", layout="wide")
 
-# Função para carregar o modelo de forma segura
-# Usa o caminho absoluto para garantir que funcione no Streamlit Cloud e localmente
+# Função de carregamento com cache
 @st.cache_resource
 def load_model():
     try:
-        diretorio_atual = os.path.dirname(os.path.abspath(__file__))
-        caminho_modelo = os.path.join(diretorio_atual, 'modelo_obesidade.pkl')
-        return joblib.load(caminho_modelo)
-    except FileNotFoundError:
-        return None
+        # Caminho absoluto para evitar erros de diretório no deploy
+        model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'modelo_obesidade.pkl')
+        return joblib.load(model_path)
     except Exception as e:
-        st.error(f"Erro ao carregar o modelo: {e}")
+        st.error(f"Erro ao carregar modelo: {e}")
         return None
 
-# Carrega o modelo e os artefatos
-artifacts = load_model()
+# Inicialização
+data_artifacts = load_model()
 
-# Validação se o modelo foi carregado corretamente
-if artifacts is None:
-    st.error("Erro Crítico: O arquivo 'modelo_obesidade.pkl' não foi encontrado.")
-    st.warning("Verifique se o arquivo está na mesma pasta do script.")
+if data_artifacts is None:
+    st.warning("Arquivo 'modelo_obesidade.pkl' não encontrado. Verifique o diretório.")
     st.stop()
 
-model = artifacts["model"]
-le = artifacts["label_encoder"]
-feature_columns = artifacts["features"]
+model = data_artifacts["model"]
+le = data_artifacts["label_encoder"]
+features = data_artifacts["features"]
 
-# Título e descrição do app
+# Interface Principal
 st.title("🏥 Sistema de Triagem de Obesidade")
-st.markdown("""
-Este sistema utiliza Inteligência Artificial para analisar fatores de risco e prever o diagnóstico.
-Preencha os dados do paciente na barra lateral para iniciar.
-""")
+st.markdown("Preencha os dados do paciente para realizar a análise preditiva de risco.")
 
-# Barra lateral para entrada de dados
-st.sidebar.header("Dados do Paciente")
+st.sidebar.header("Ficha do Paciente")
 
-def get_user_data():
-    # Dados Pessoais
-    genero = st.sidebar.selectbox("Gênero", ["Masculino", "Feminino"])
-    idade = st.sidebar.number_input("Idade", 14, 100, 25)
-    altura = st.sidebar.number_input("Altura (m)", 1.00, 2.50, 1.70)
-    peso = st.sidebar.number_input("Peso (kg)", 30.0, 200.0, 70.0)
+def get_user_input():
+    # Dados Demográficos
+    gender = st.sidebar.selectbox("Gênero", ["Masculino", "Feminino"])
+    age = st.sidebar.number_input("Idade", 14, 100, 25)
+    height = st.sidebar.number_input("Altura (m)", 1.00, 2.50, 1.70)
+    weight = st.sidebar.number_input("Peso (kg)", 30.0, 200.0, 70.0)
     
-    st.sidebar.markdown("---") # Separador visual
+    st.sidebar.markdown("---")
     
     # Histórico e Hábitos
-    # Convertendo inputs visuais (PT) para valores numéricos que o modelo entende
-    hist_fam = st.sidebar.selectbox("Histórico Familiar de Obesidade?", ["Sim", "Não"])
-    family_history = 1 if hist_fam == "Sim" else 0
+    fam_hist = st.sidebar.selectbox("Histórico Familiar de Obesidade?", ["Não", "Sim"])
+    favc = st.sidebar.selectbox("Consome alimentos calóricos frequente?", ["Não", "Sim"])
+    fcvc = st.sidebar.slider("Frequência de Vegetais (1=Nunca, 3=Sempre)", 1, 3, 2)
+    ncp = st.sidebar.slider("Refeições principais por dia", 1, 4, 3)
     
-    favc_input = st.sidebar.selectbox("Consome alimentos calóricos com frequência?", ["Sim", "Não"])
-    favc = 1 if favc_input == "Sim" else 0
+    # Mapeamento de Frequência (CAEC/CALC)
+    freq_map = {"Não": 0, "Às vezes": 1, "Frequentemente": 2, "Sempre": 3}
     
-    fcvc = st.sidebar.slider("Frequência de consumo de vegetais (1=Nunca, 3=Sempre)", 1, 3, 2)
-    ncp = st.sidebar.slider("Número de refeições principais por dia", 1, 4, 3)
+    caec = st.sidebar.selectbox("Come entre refeições?", list(freq_map.keys()))
+    smoke = st.sidebar.selectbox("Fumante?", ["Não", "Sim"])
+    ch2o = st.sidebar.slider("Consumo de Água (1=Pouco, 3=Muito)", 1, 3, 2)
+    scc = st.sidebar.selectbox("Monitora calorias?", ["Não", "Sim"])
+    faf = st.sidebar.slider("Atividade Física Semanal (0=Nenhuma, 3=Alta)", 0, 3, 1)
+    tue = st.sidebar.slider("Tempo em Dispositivos (0=Baixo, 2=Alto)", 0, 2, 1)
+    calc = st.sidebar.selectbox("Consumo de Álcool", list(freq_map.keys()))
     
-    # Mapeamento para variáveis ordinais
-    mapa_caec = {"Não": 0, "Às vezes": 1, "Frequentemente": 2, "Sempre": 3}
-    caec_label = st.sidebar.selectbox("Come entre as refeições?", list(mapa_caec.keys()))
-    caec = mapa_caec[caec_label]
-    
-    smoke_input = st.sidebar.selectbox("Fumante?", ["Sim", "Não"])
-    smoke = 1 if smoke_input == "Sim" else 0
-    
-    ch2o = st.sidebar.slider("Consumo diário de água (1=Pouco, 3=Muito)", 1, 3, 2)
-    
-    scc_input = st.sidebar.selectbox("Monitora calorias ingeridas?", ["Sim", "Não"])
-    scc = 1 if scc_input == "Sim" else 0
-    
-    faf = st.sidebar.slider("Frequência de atividade física semanal (0=Nenhuma, 3=Muita)", 0, 3, 1)
-    tue = st.sidebar.slider("Tempo usando dispositivos eletrônicos (0=Pouco, 2=Muito)", 0, 2, 1)
-    
-    mapa_calc = {"Não": 0, "Às vezes": 1, "Frequentemente": 2, "Sempre": 3}
-    calc_label = st.sidebar.selectbox("Consumo de álcool", list(mapa_calc.keys()))
-    calc = mapa_calc[calc_label]
-    
-    # Mapeamento do transporte para inglês (necessário para o OneHotEncoding)
-    mapa_transporte = {
+    # Transporte (Mapeamento para Inglês para OneHotEncoding posterior)
+    trans_map = {
         "Transporte Público": "Public_Transportation",
         "Caminhada": "Walking",
         "Automóvel": "Automobile",
         "Motocicleta": "Motorbike",
         "Bicicleta": "Bike"
     }
-    transporte_label = st.sidebar.selectbox("Meio de transporte principal", list(mapa_transporte.keys()))
-    mtrans = mapa_transporte[transporte_label]
-    
-    # Conversão do Gênero
-    gender_val = 1 if genero == "Masculino" else 0
-    
-    # Cria o dicionário com os dados
+    mtrans = st.sidebar.selectbox("Meio de Transporte", list(trans_map.keys()))
+
+    # Construção do Dicionário (Já aplicando conversão binária/ordinal)
     user_data = {
-        'Gender': gender_val,
-        'Age': idade,
-        'Height': altura,
-        'Weight': peso,
-        'family_history': family_history,
-        'FAVC': favc,
+        'Gender': 1 if gender == "Masculino" else 0,
+        'Age': age,
+        'Height': height,
+        'Weight': weight,
+        'family_history': 1 if fam_hist == "Sim" else 0,
+        'FAVC': 1 if favc == "Sim" else 0,
         'FCVC': fcvc,
         'NCP': ncp,
-        'CAEC': caec,
-        'SMOKE': smoke,
+        'CAEC': freq_map[caec],
+        'SMOKE': 1 if smoke == "Sim" else 0,
         'CH2O': ch2o,
-        'SCC': scc,
+        'SCC': 1 if scc == "Sim" else 0,
         'FAF': faf,
         'TUE': tue,
-        'CALC': calc,
-        'MTRANS': mtrans
+        'CALC': freq_map[calc],
+        'MTRANS': trans_map[mtrans] # Mantém string para get_dummies
     }
     
     return pd.DataFrame(user_data, index=[0])
 
-# Captura os dados do usuário
-input_df = get_user_data()
+# Processamento
+df_input = get_user_input()
 
-# Processamento dos dados
-# Aplica OneHotEncoding e garante que as colunas sejam iguais ao treinamento
-df_processed = pd.get_dummies(input_df, columns=['MTRANS'])
-df_processed = df_processed.reindex(columns=feature_columns, fill_value=0)
+# Tratamento de variáveis categóricas (Dummy Variables)
+df_processed = pd.get_dummies(df_input, columns=['MTRANS'])
 
-# Botão de ação
-if st.button("🔍 Realizar Diagnóstico"):
+# Garante alinhamento de colunas com o modelo treinado (preenche ausentes com 0)
+df_processed = df_processed.reindex(columns=features, fill_value=0)
+
+# Botão de Ação
+if st.button("Realizar Diagnóstico"):
     try:
-        # Predição
+        # Inferência
         prediction = model.predict(df_processed)
-        prediction_proba = model.predict_proba(df_processed)
+        proba = model.predict_proba(df_processed)
         
-        # Recupera o label original em inglês
-        classe_original = le.inverse_transform(prediction)[0]
+        # Decodificação
+        class_name = le.inverse_transform(prediction)[0]
+        confidence = np.max(proba) * 100
         
-        # Dicionário de tradução
-        traducoes = {
+        # Dicionário de Tradução Visual
+        labels_pt = {
             'Insufficient_Weight': 'Abaixo do Peso',
             'Normal_Weight': 'Peso Normal',
             'Overweight_Level_I': 'Sobrepeso Nível I',
@@ -156,43 +126,32 @@ if st.button("🔍 Realizar Diagnóstico"):
             'Obesity_Type_III': 'Obesidade Tipo III (Mórbida)'
         }
         
-        # Traduz o resultado
-        resultado_pt = traducoes.get(classe_original, classe_original)
+        result_text = labels_pt.get(class_name, class_name)
         
-        # Calcula a confiança
-        confianca = np.max(prediction_proba) * 100
+        # Exibição
+        st.subheader("Resultado")
         
-        # Exibe o resultado com cores apropriadas
-        st.subheader("Resultado da Análise:")
-        
-        if "Obesity" in classe_original:
-            st.error(f"⚠️ Diagnóstico: **{resultado_pt}**")
-        elif "Overweight" in classe_original:
-            st.warning(f"⚠️ Diagnóstico: **{resultado_pt}**")
+        if "Obesity" in class_name:
+            st.error(f"Diagnóstico: {result_text}")
+        elif "Overweight" in class_name:
+            st.warning(f"Diagnóstico: {result_text}")
         else:
-            st.success(f"✅ Diagnóstico: **{resultado_pt}**")
+            st.success(f"Diagnóstico: {result_text}")
             
-        st.info(f"🎯 Nível de Confiança do Modelo: **{confianca:.2f}%**")
+        st.info(f"Probabilidade estimada: {confidence:.2f}%")
         
-        # Gráfico de probabilidades
-        st.markdown("---")
-        st.subheader("📊 Probabilidades Detalhadas")
+        # Visualização Gráfica
+        st.divider()
+        st.subheader("Probabilidades por Classe")
         
-        # Cria um DataFrame para o gráfico, traduzindo as colunas
-        colunas_traduzidas = [traducoes.get(c, c) for c in le.classes_]
-        proba_df = pd.DataFrame(prediction_proba, columns=colunas_traduzidas)
+        cols_pt = [labels_pt.get(c, c) for c in le.classes_]
+        df_proba = pd.DataFrame(proba, columns=cols_pt)
         
-        fig, ax = plt.subplots(figsize=(10, 5))
-        sns.barplot(x=proba_df.columns, y=proba_df.iloc[0].values, palette="viridis", ax=ax)
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.barplot(x=df_proba.columns, y=df_proba.iloc[0].values, palette="viridis", ax=ax)
         plt.xticks(rotation=45, ha='right')
         plt.ylabel("Probabilidade")
-        plt.xlabel("")
-        plt.title("Análise de Risco por Categoria")
         st.pyplot(fig)
         
     except Exception as e:
-        st.error(f"Erro ao processar predição: {e}")
-
-# Rodapé simples
-st.markdown("---")
-st.markdown("**Tech Challenge Fase 4** | Sistema de Triagem de Obesidade")
+        st.error(f"Erro no processamento: {e}")
