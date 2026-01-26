@@ -49,7 +49,7 @@ O algoritmo escolhido foi o **Random Forest Classifier** devido à sua robustez 
 
 ---
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 /
@@ -88,7 +88,7 @@ Execute todas as células ("Run All").
 
 O novo modelo será salvo na pasta automaticamente.
 
-🌐 Deploy em Nuvem (Streamlit Cloud)
+Deploy em Nuvem (Streamlit Cloud)
 A aplicação encontra-se implantada e acessível publicamente através do Streamlit Cloud.
 
 🔗 Link de Acesso: https://obbesidade-ml.streamlit.app/
