@@ -17,8 +17,11 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 
 ## Arquitetura da Solução
 
-![alt text](<Pipeline Obesidade.png>)
+## 🏗️ Arquitetura da Solução
 
+O diagrama abaixo ilustra o fluxo de dados automatizado do projeto:
+
+```mermaid
 graph TD
     User((Pacientes/Médicos)) -->|Input de Dados| UI[Interface Web Streamlit]
     
@@ -39,6 +42,11 @@ graph TD
     end
     
     Output -->|Diagnóstico + Recomendações| User
+    
+    style User fill:#f9f,stroke:#333,stroke-width:2px
+    style UI fill:#bbf,stroke:#333,stroke-width:2px
+    style Model fill:#bfb,stroke:#333,stroke-width:2px
+    style Output fill:#f96,stroke:#333,stroke-width:2px
 ---
 
 ## Funcionalidades da Aplicação
@@ -125,3 +133,4 @@ FIAP - Tech Challenge Fase 4
 
 
 [def]: image.png
+
