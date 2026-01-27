@@ -17,34 +17,34 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 
 ## 🏗️ Arquitetura da Solução
 
-O diagrama abaixo ilustra o fluxo de dados automatizado do projeto:
+O diferencial da entrega é a integração do modelo em uma aplicação web interativa (**Streamlit**), permitindo o uso prático e imediato em ambiente clínico, com foco na experiência do usuário e suporte à decisão.
 
-```mermaid
-graph TD
-    User((Pacientes/Médicos)) -->|Input de Dados| UI[Interface Web Streamlit]
-    
-    subgraph "Aplicação (Frontend)"
-        UI -->|Coleta Variáveis| Pandas[Tratamento de Dados]
-        Pandas -->|One-Hot Encoding| Feat[Engenharia de Features]
-    end
-    
-    subgraph "Núcleo de Inteligência (Backend)"
-        Feat -->|Dados Processados| Model{Modelo Random Forest}
-        Model -->|Inferência| Pred[Previsão de Classe]
-        Model -->|Probabilidade| Prob[Cálculo de Confiança]
-    end
-    
-    subgraph "Camada de Negócio"
-        Pred -->|Resultado| Rules[Regras de Insights]
-        Rules -->|Alertas de Saúde| Output[Dashboard Final]
-    end
-    
-    Output -->|Diagnóstico + Recomendações| User
-    
-    style User fill:#f9f,stroke:#333,stroke-width:2px
-    style UI fill:#bbf,stroke:#333,stroke-width:2px
-    style Model fill:#bfb,stroke:#333,stroke-width:2px
-    style Output fill:#f96,stroke:#333,stroke-width:2px
+---
+
+## 🏗️ Arquitetura da Solução
+
+O fluxo abaixo demonstra como o dado viaja do paciente até o diagnóstico:
+
+```text
++-------------------+        +---------------------------+        +-----------------------+
+|  1. USUÁRIO       |        |  2. INTERFACE (Streamlit) |        |  3. INTELIGÊNCIA (AI) |
++-------------------+        +---------------------------+        +-----------------------+
+|                   |        |                           |        |                       |
+| (Insere Idade,    | ---->  | - Recebe dados brutos     | ---->  | - Modelo Random Forest|
+|  Peso, Hábitos)   |        | - Trata variáveis         |        | - Calcula Risco       |
+|                   |        |                           |        |                       |
++---------^---------+        +-------------+-------------+        +-----------+-----------+
+          |                                |                                  |
+          |                                |                                  |
+          |                                v                                  |
+          |                  +-------------+-------------+                    |
+          |                  |    4. SAÍDA (Dashboard)   |                    |
+          |                  +---------------------------+                    |
+          |                  |                           |                    |
+          +------------------| - Diagnóstico (Ex: Obeso) | <------------------+
+                             | - Alertas de Saúde        |
+                             |                           |
+                             +---------------------------+
 ---
 
 ## Funcionalidades da Aplicação
@@ -131,6 +131,7 @@ FIAP - Tech Challenge Fase 4
 
 
 [def]: image.png
+
 
 
 
