@@ -35,6 +35,12 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 
 ---
 
+## Diagrama de Arquitetura
+
+<img width="3185" height="6981" alt="Pipeline Obesidade" src="https://github.com/user-attachments/assets/076b6c07-ccc3-4f5d-b672-f2f43f2df966" />
+
+---
+
 ## Performance do Modelo
 
 O algoritmo escolhido foi o **Random Forest Classifier** devido à sua robustez para lidar com dados tabulares complexos e relações não-lineares.
@@ -92,5 +98,6 @@ Deploy em Nuvem (Streamlit Cloud)
 A aplicação encontra-se implantada e acessível publicamente através do Streamlit Cloud.
 
 🔗 Link de Acesso: https://obbesidade-ml.streamlit.app/
+
 
 FIAP - Tech Challenge Fase 4
