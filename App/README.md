@@ -1,18 +1,43 @@
-# Sistema de Triagem de Obesidade - Tech Challenge (Fase 4)
+# 🏥 Sistema de Triagem de Obesidade - Tech Challenge (Fase 4)
 
 **Pós-Tech Data Analytics | FIAP**
 **Autor:** Mauro Pedro Pupim Jr (RM 365239)
 
 ---
 
-## Sobre o Projeto
+## 📋 Sobre o Projeto
 
 Este projeto consiste no desenvolvimento de uma solução completa de Machine Learning para auxiliar profissionais de saúde na **triagem de níveis de obesidade**.
 
 A partir de dados históricos de pacientes (hábitos alimentares, atividade física e histórico familiar), treinamos um modelo preditivo capaz de classificar o paciente em 7 categorias de peso, desde "Abaixo do Peso" até "Obesidade Mórbida (Tipo III)".
 
-O diferencial da entrega é a integração do modelo em uma aplicação web interativa (**Streamlit**), permitindo o uso prático e imediato em ambiente clínico.
+O diferencial da entrega é a integração do modelo em uma aplicação web interativa (**Streamlit**), permitindo o uso prático e imediato em ambiente clínico, com foco na experiência do usuário e suporte à decisão.
 
+---
+
+## 🏗️ Arquitetura da Solução
+
+O fluxo abaixo demonstra como o dado viaja do paciente até o diagnóstico:
+
+```text
+[ 1. Usuário/Médico ]
+        |
+        | (Insere dados: Idade, Peso, Hábitos...)
+        v
+[ 2. Interface Web (Streamlit) ]
+        |
+        | (Envia dados brutos)
+        v
+[ 3. Tratamento de Dados ]
+        | (Arredondamento, Conversão Numérica)
+        v
+[ 4. Inteligência Artificial ] <---- [ Arquivo .pkl (Modelo Treinado) ]
+        | (Calcula Risco e Probabilidade)
+        v
+[ 5. Diagnóstico Final ]
+        |
+        +---> Classificação (Ex: Obesidade Tipo I)
+        +---> Alertas de Saúde (Ex: Beber mais água)
 ---
 
 ## Funcionalidades da Aplicação
@@ -97,3 +122,4 @@ FIAP - Tech Challenge Fase 4
 
 
 [def]: image.png
+
