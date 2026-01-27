@@ -15,6 +15,32 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 
 ---
 
+## Arquitetura da Solução
+
+![alt text](<Pipeline Obesidade.png>)
+
+graph TD
+    User((Pacientes/Médicos)) -->|Input de Dados| UI[Interface Web Streamlit]
+    
+    subgraph "Aplicação (Frontend)"
+        UI -->|Coleta Variáveis| Pandas[Tratamento de Dados]
+        Pandas -->|One-Hot Encoding| Feat[Engenharia de Features]
+    end
+    
+    subgraph "Núcleo de Inteligência (Backend)"
+        Feat -->|Dados Processados| Model{Modelo Random Forest}
+        Model -->|Inferência| Pred[Previsão de Classe]
+        Model -->|Probabilidade| Prob[Cálculo de Confiança]
+    end
+    
+    subgraph "Camada de Negócio"
+        Pred -->|Resultado| Rules[Regras de Insights]
+        Rules -->|Alertas de Saúde| Output[Dashboard Final]
+    end
+    
+    Output -->|Diagnóstico + Recomendações| User
+---
+
 ## Funcionalidades da Aplicação
 
 * **Diagnóstico em Tempo Real:** Predição instantânea da classe de obesidade com base no formulário preenchido.
@@ -32,12 +58,6 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 * **Machine Learning:** Scikit-learn (Random Forest Classifier)
 * **Deploy/Web App:** Streamlit
 * **Serialização:** Joblib
-
----
-
-## Diagrama de Arquitetura
-
-<img width="3185" height="6981" alt="Pipeline Obesidade" src="https://github.com/user-attachments/assets/076b6c07-ccc3-4f5d-b672-f2f43f2df966" />
 
 ---
 
@@ -99,5 +119,6 @@ A aplicação encontra-se implantada e acessível publicamente através do Strea
 
 🔗 Link de Acesso: https://obbesidade-ml.streamlit.app/
 
-
 FIAP - Tech Challenge Fase 4
+
+[def]: image.png
