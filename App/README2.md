@@ -123,4 +123,5 @@ A aplicação encontra-se implantada e acessível publicamente através do Strea
 
 FIAP - Tech Challenge Fase 4
 
+
 [def]: image.png
