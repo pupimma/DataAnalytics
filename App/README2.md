@@ -15,8 +15,6 @@ O diferencial da entrega é a integração do modelo em uma aplicação web inte
 
 ---
 
-## Arquitetura da Solução
-
 ## 🏗️ Arquitetura da Solução
 
 O diagrama abaixo ilustra o fluxo de dados automatizado do projeto:
@@ -133,4 +131,5 @@ FIAP - Tech Challenge Fase 4
 
 
 [def]: image.png
+
 
